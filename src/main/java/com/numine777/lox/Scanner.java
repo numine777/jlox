@@ -12,7 +12,7 @@ class Scanner {
     private final List<Token> tokens = new ArrayList<>();
     private int start = 0;
     private int current = 0;
-    private line = 1;
+    private int line = 1;
     private static final Map<String, TokenType> keywords;
 
     static {
@@ -76,7 +76,7 @@ class Scanner {
                 break;
             case '/':
                 if (match('/')) {
-                    while (peek() != "\n" && !isAtEnd()) advance();
+                    while (peek() != '\n' && !isAtEnd()) advance();
                 } else if (match('*')) {
                     commentBlock();
                 } else {
@@ -91,7 +91,7 @@ class Scanner {
             case '\n':
                 line++;
                 break;
-            case '"': string() break;
+            case '"': string(); break;
 
             default:
                 if (isDigit(c)) {
@@ -128,9 +128,9 @@ class Scanner {
     private void number() {
         while (isDigit(peek())) advance();
 
-        if (peek() == "." && isDigit(peekNext())) {
+        if (peek() == '.' && isDigit(peekNext())) {
             advance();
-            while isDigit(peek()) advance();
+            while (isDigit(peek())) advance();
         }
 
         addToken(NUMBER, Double.parseDouble(source.substring(start, current)));
@@ -138,7 +138,7 @@ class Scanner {
 
     private void string() {
         while (peek() != '"' && !isAtEnd()) {
-            if (peek() == "\n") line++;
+            if (peek() == '\n') line++;
             advance();
         }
         if (isAtEnd()) {
