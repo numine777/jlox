@@ -16,6 +16,8 @@ public class GenerateAst {
                 "Binary   : Expr left, Token operator, Expr right",
                 "Grouping : Expr expression",
                 "Literal  : Object value",
+                "Comma    : Expr left, Expr right",
+                "Ternary  : Expr condition, Expr true_expr, Expr false_expr",
                 "Unary    : Token operator, Expr right"));
     }
 

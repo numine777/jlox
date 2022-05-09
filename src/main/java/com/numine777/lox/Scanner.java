@@ -115,6 +115,12 @@ class Scanner {
             case '"':
                 string();
                 break;
+            case ':':
+                addToken(COLON);
+                break;
+            case '?':
+                addToken(QUESTION);
+                break;
 
             default:
                 if (isDigit(c)) {

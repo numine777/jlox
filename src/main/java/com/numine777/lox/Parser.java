@@ -28,16 +28,32 @@ class Parser {
     }
 
     private Expr comma() {
-        Expr expr = equality();
+        Expr expr = ternary();
         while (match(COMMA)) {
-            Token operator = previous();
-            Expr right = equality();
-            expr = right;
+            Expr right = ternary();
+            expr = new Expr.Comma(expr, right);
         }
         return expr;
     }
 
+    private Expr ternary() {
+        Expr condition = equality();
+        if (match(QUESTION)) {
+            Expr true_expr = expression();
+            consume(COLON, "Expect ':' to complete ternary expression");
+            Expr false_expr = ternary();
+            return new Expr.Ternary(condition, true_expr, false_expr);
+        } else {
+            return condition;
+        }
+    }
+
     private Expr equality() {
+        if (match(EQUAL_EQUAL, BANG_EQUAL)) {
+            Token operator = previous();
+            Expr right = comparison();
+            throw error(operator, "Binary expression expects a left side operator.");
+        }
         Expr expr = comparison();
         while (match(EQUAL_EQUAL, BANG_EQUAL)) {
             Token operator = previous();
@@ -48,6 +64,11 @@ class Parser {
     }
 
     private Expr comparison() {
+        if (match(GREATER, GREATER_EQUAL, LESS, LESS_EQUAL)) {
+            Token operator = previous();
+            Expr right = term();
+            throw error(operator, "Binary expression expects a left side operator.");
+        }
         Expr expr = term();
         while (match(GREATER, GREATER_EQUAL, LESS, LESS_EQUAL)) {
             Token operator = previous();
@@ -58,8 +79,13 @@ class Parser {
     }
 
     private Expr term() {
+        if (match(PLUS)) {
+            Token operator = previous();
+            Expr right = factor();
+            throw error(operator, "Binary expression expects a left side operator.");
+        }
         Expr expr = factor();
-        while (match(PLUS, MINUS)) {
+        while (match(MINUS, PLUS)) {
             Token operator = previous();
             Expr right = factor();
             expr = new Expr.Binary(expr, operator, right);
@@ -68,6 +94,11 @@ class Parser {
     }
 
     private Expr factor() {
+        if (match(SLASH, STAR)) {
+            Token operator = previous();
+            Expr right = unary();
+            throw error(operator, "Binary expression expects a left side operator.");
+        }
         Expr expr = unary();
         while (match(SLASH, STAR)) {
             Token operator = previous();

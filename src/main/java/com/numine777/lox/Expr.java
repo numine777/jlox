@@ -7,6 +7,8 @@ abstract class Expr {
     R visitBinaryExpr(Binary expr);
     R visitGroupingExpr(Grouping expr);
     R visitLiteralExpr(Literal expr);
+    R visitCommaExpr(Comma expr);
+    R visitTernaryExpr(Ternary expr);
     R visitUnaryExpr(Unary expr);
   }
   static class Binary extends Expr {
@@ -48,6 +50,36 @@ abstract class Expr {
     }
 
     final Object value;
+  }
+  static class Comma extends Expr {
+    Comma(Expr left, Expr right) {
+      this.left = left;
+      this.right = right;
+    }
+
+    @Override
+    <R> R accept(Visitor<R> visitor) {
+      return visitor.visitCommaExpr(this);
+    }
+
+    final Expr left;
+    final Expr right;
+  }
+  static class Ternary extends Expr {
+    Ternary(Expr condition, Expr true_expr, Expr false_expr) {
+      this.condition = condition;
+      this.true_expr = true_expr;
+      this.false_expr = false_expr;
+    }
+
+    @Override
+    <R> R accept(Visitor<R> visitor) {
+      return visitor.visitTernaryExpr(this);
+    }
+
+    final Expr condition;
+    final Expr true_expr;
+    final Expr false_expr;
   }
   static class Unary extends Expr {
     Unary(Token operator, Expr right) {
