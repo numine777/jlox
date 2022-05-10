@@ -75,12 +75,14 @@ class Interpreter implements Expr.Visitor<Object> {
                 if (left instanceof Double && right instanceof Double) {
                     return (double) left + (double) right;
                 }
-                if (left instanceof String && right instanceof String) {
-                    return (String) left + (String) right;
+                if (left instanceof String || right instanceof String) {
+                    return stringify(left) + stringify(right);
                 }
-                throw new RuntimeError(expr.operator, "Operands must be two numbers or two strings.");
+                throw new RuntimeError(expr.operator, "Operands must be two numbers or strings.");
             case SLASH:
                 checkNumberOperands(expr.operator, left, right);
+                if ((double) right == 0.0)
+                    throw RuntimeError(expr.operator, "Attempted division by 0.");
                 return (double) left / (double) right;
             case STAR:
                 checkNumberOperands(expr.operator, left, right);
@@ -96,7 +98,7 @@ class Interpreter implements Expr.Visitor<Object> {
         return isTruthy(condition) ? evaluate(expr.true_expr) : evaluate(expr.false_expr);
     }
 
-    @Override 
+    @Override
     public Object visitCommaExpr(Expr.Comma expr) {
         evaluate(expr.left);
         return evaluate(expr.right);
