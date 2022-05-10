@@ -17,7 +17,7 @@ class Interpreter implements Expr.Visitor<Object> {
     }
 
     @Override
-    public Object visitGroupExpr(Expr.Grouping expr) {
+    public Object visitGroupingExpr(Expr.Grouping expr) {
         return evaluate(expr.expression);
     }
 
@@ -78,7 +78,7 @@ class Interpreter implements Expr.Visitor<Object> {
                 if (left instanceof String && right instanceof String) {
                     return (String) left + (String) right;
                 }
-                throw new RuntimeError(operator, "Operands must be two numbers or two strings.");
+                throw new RuntimeError(expr.operator, "Operands must be two numbers or two strings.");
             case SLASH:
                 checkNumberOperands(expr.operator, left, right);
                 return (double) left / (double) right;
@@ -88,6 +88,18 @@ class Interpreter implements Expr.Visitor<Object> {
             default:
                 return null;
         }
+    }
+
+    @Override
+    public Object visitTernaryExpr(Expr.Ternary expr) {
+        Object condition = evaluate(expr.condition);
+        return isTruthy(condition) ? evaluate(expr.true_expr) : evaluate(expr.false_expr);
+    }
+
+    @Override 
+    public Object visitCommaExpr(Expr.Comma expr) {
+        evaluate(expr.left);
+        return evaluate(expr.right);
     }
 
     private boolean isTruthy(Object object) {
@@ -107,7 +119,7 @@ class Interpreter implements Expr.Visitor<Object> {
     }
 
     private String stringify(Object object) {
-        if (Object == null)
+        if (object == null)
             return "nil";
         if (object instanceof Double) {
             String text = object.toString();
