@@ -125,8 +125,7 @@ class Scanner {
             default:
                 if (isDigit(c)) {
                     number();
-                }
-                if (isAlpha(c)) {
+                } else if (isAlpha(c)) {
                     identifier();
                 } else {
                     Lox.error(line, "Unexpected character.");
@@ -138,12 +137,12 @@ class Scanner {
     private void commentBlock() {
         int depth = 1;
         while (depth > 0 && !isAtEnd()) {
-            if (source.charAt(current) == '/' && peekNext() == '*') {
-                depth++;
-                advance();
-            }
             if (source.charAt(current) == '*' && peekNext() == '/') {
                 depth--;
+                advance();
+            }
+            if (source.charAt(current) == '/' && peekNext() == '*') {
+                depth++;
                 advance();
             }
             if (source.charAt(current) == '\n')

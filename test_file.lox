@@ -1,8 +1,5 @@
-/* This is a big
-nasty comment
-block /* This is
-a nested comment block
-*/*/
-or else if () / { } ==
-,
-|
+var a = 1;
+{
+  var a = a + 2;
+  print a;
+}
