@@ -1,5 +1,9 @@
 var a = 1;
+var b = 2;
 {
   var a = a + 2;
+  print b;
+  b = a + b;
   print a;
 }
+print b;
