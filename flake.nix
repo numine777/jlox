@@ -15,15 +15,26 @@
         packageName = "jlox";
       in
       {
-        devShell = (pkgs.buildFHSUserEnv {
-          name = "jlox-dev-env";
-          targetPkgs = pkgs: (with pkgs; [
+        # Only useful for NixOS
+        # devShell = (pkgs.buildFHSUserEnv {
+        #   name = "jlox-dev-env";
+        #   targetPkgs = pkgs: (with pkgs; [
+        #     bazel_5
+        #     git
+        #     glibc
+        #     gcc
+        #     jdk11_headless
+        #     zlib
+        #   ]);
+        # }).env;
+        devShell = pkgs.mkShell {
+          packages = with pkgs; [
             bazel_5
             git
             glibc
             gcc
-            jdk11
-          ]);
-        }).env;
+            jdk11_headless
+          ];
+        };
       });
 }

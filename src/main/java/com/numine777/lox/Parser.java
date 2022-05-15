@@ -51,7 +51,23 @@ class Parser {
             return whileStatement();
         if (match(LEFT_BRACE))
             return new Stmt.Block(block());
+        if (match(BREAK))
+            return parseBreak();
+        if (match(CONTINUE))
+            return parseContinue();
         return expressionStatement();
+    }
+
+    private Stmt parseContinue() {
+        Token keyword = previous();
+        consume(SEMICOLON, "Expect ';' after 'continue'.");
+        return new Stmt.Continue(keyword);
+    }
+
+    private Stmt parseBreak() {
+        Token keyword = previous();
+        consume(SEMICOLON, "Expect ';' after 'break'.");
+        return new Stmt.Break(keyword);
     }
 
     private Stmt forStatement() {
